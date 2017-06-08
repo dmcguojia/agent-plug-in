@@ -1,0 +1,215 @@
+body {
+	font-family:Verdana, Arial, Helvetica, sans-serif, "宋体";
+	font-size:12px;
+	text-decoration: none;
+	background-color: #e9f6ff;
+	PADDING-TOP: 0px;
+    PADDING-RIGHT: 0px; 
+	PADDING-LEFT: 0px; 
+	PADDING-BOTTOM: 0px; 
+	MARGIN: 0px; 
+}
+A : {
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #ddd;
+	border-right-color: #ddd;
+	border-bottom-color: #ddd;
+	border-left-color: #ddd;
+	font-family: Verdana, Arial, Helvetica, sans-serif, "宋体";
+	font-size: 12px;
+	line-height: 150%;
+	color: #000033;
+	text-decoration: none;
+}
+A:link .imgborder {
+	BORDER-RIGHT: #ddd 1px solid; BORDER-TOP: #ddd 1px solid; BORDER-LEFT: #ddd 1px solid; BORDER-BOTTOM: #ddd 1px solid
+}
+A:visited .imgborder {
+	BORDER-RIGHT: #ddd 1px solid; BORDER-TOP: #ddd 1px solid; BORDER-LEFT: #ddd 1px solid; BORDER-BOTTOM: #ddd 1px solid
+}
+A:hover .imgborder {
+	BORDER-RIGHT: #333 1px solid; BORDER-TOP: #333 1px solid; BORDER-LEFT: #333 1px solid; BORDER-BOTTOM: #333 1px solid
+}
+TABLE {
+	BORDER-COLLAPSE: collapse; border-spacing: 0
+}
+.maintitle_bg {
+	background-image: url(../images/main/topbg.gif);
+	background-repeat: repeat-x;
+
+	background-color: #2c1810;
+	background-position: center center;
+	background-position: left top;
+	height: 28px;
+}
+.mainhead {
+	font-family: "宋体";
+	font-weight: bolder;
+	height:auto;
+	text-decoration: none;
+	float: none;
+	line-height: normal;
+	text-align: left;
+	background-color: #f7ebd4;
+	
+}
+
+.main_hot {
+	height:28;
+	background-image: url(../images/main/hot.gif);
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+.mainhead2 {
+	font-family: "宋体";
+	font-size: 13px;
+	font-weight: bolder;
+	height:32;
+	text-decoration: none;
+	float: none;
+	color: #000000;
+	line-height: normal;
+	text-align: left;
+	background-color: #e0e9f2;
+}
+.maintitle {
+	font-family: "宋体";
+	font-size: 12px;
+	font-weight: bolder;
+	height:30;
+	text-decoration: none;
+	float: none;
+	color: #000000;
+	line-height: normal;
+	text-align: center;
+	vertical-align: middle;
+}
+.maintitle2 {
+	font-family: "宋体";
+	font-size: 12px;
+	font-weight: bolder;
+	height:30;
+	text-decoration: none;
+	float: none;
+	color: #003366;
+	line-height: normal;
+	text-align: left;
+	vertical-align: middle;
+}
+
+.main_list_bg {
+	background-color: #fff6e4;
+	height:30;
+}
+.main_list_bg2 {
+	background-color: #ffffff;
+	height:28;
+}
+.main_list {
+	font-family: "宋体";
+	font-size: 12px;
+	font-weight: normal;
+	height:28;
+	text-decoration: none;
+	float: none;
+	text-align: center;
+}
+.main_list1 {
+	font-family: "宋体";
+	font-size: 12px;
+	font-weight: normal;
+	height:32;
+	text-decoration: none;
+	float: none;
+	text-align: right;
+}
+.main_list2 {
+	font-family: "宋体";
+	font-size: 12px;
+	font-weight: normal;
+	height:32;
+	text-decoration: none;
+	float: none;
+	text-align: left;
+}
+.main_list3 {
+	font-family: "宋体";
+	font-size: 12px;
+	font-weight: normal;
+	height:32;
+	text-decoration: none;
+	float: none;
+	text-align: left;
+	background-color: #FFFFFF;
+}
+.main_list4 {
+	font-family: "宋体";
+	font-size: 12px;
+	font-weight: normal;
+	height:32;
+	text-decoration: none;
+	float: none;
+	text-align: right;
+	background-color: #f1f2f4;
+}
+.main_list5 {
+	font-family: "宋体";
+	font-size: 12px;
+	font-weight: normal;
+	height:32;
+	text-decoration: none;
+	float: none;
+	
+	background-color: #f1f2f4;
+}
+
+.button1 {
+	font-family: "宋体";
+	font-size: 12px;
+	font-weight: normal;
+	height:21px; 	
+	background-image: url(../images/login/button.gif);
+    BORDER-BOTTOM: #5285c6 1px solid;
+    BORDER-LEFT: #5285c6 1px solid;
+    BORDER-RIGHT: #5285c6 1px solid;
+    BORDER-TOP: #5285c6 1px solid;
+	padding-bottom: 2px; 
+    padding-top: 2px; 
+    cursor:hand;
+}
+
+.readonly{
+	color:Gray;
+	border-width:1px;
+	border-bottom-color:#f1f1ff;
+	border-right-color:#f1f1ff;
+}
+
+.syswork-main{
+}
+
+.sett-date td{
+	font-family: "宋体";
+	font-size:12px;
+	height:21px;
+	line-height: 21px;
+	margin:4px;
+	background-color:#ffffff;
+}
+
+.detail{
+	height:21px;
+	line-height: 21px;
+	background-color:#ffffff;
+}
+
+.detail td{
+   	border:solid 1px #DBDBDB;
+}

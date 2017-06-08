@@ -1,0 +1,12 @@
+.selfFormTitle{width:100%}
+.selfFormTitle td{color:#000000;border:solid 1px #000;border-style: solid solid none solid;height:20px;}
+.selfFormTitle #title{font-family:sans-serif;font-weight:bold;font-size:22px;}
+
+.selfFormTable{width:100%}
+.selfFormTable td{color:#000000;border:solid 1px #000;border-style: solid solid solid solid;height:20px;background-color: red;font-size:14px;}
+.selfFormTable #title{font-family:sans-serif;font-weight:bold;font-size:22px;}
+
+.selfFormFoot{width:100%;}
+.selfFormFoot td{color:#000000;border:solid 1px #fff;border-style: none solid solid solid;height:20px;}
+	
+.selfFormFoot .notes td{height:10px;font-family:sans-serif;font-size:12px;border-style: none none none none;}

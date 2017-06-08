@@ -1,0 +1,36 @@
+@charset "utf-8";
+/*Created by liuyao*/
+/*初始化*/
+html,body{height:100%; }
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td{padding:0; margin:0; }
+body,fieldset,th,td,select,input,textarea {font-size:12px;font-family: Arial,"宋体", sans-serif;color:black;}
+fieldset,img{border:0; }
+table{border-collapse:collapse; border-spacing:0; }
+ol,ul{list-style:none; }
+div{text-align:left}
+address,caption,cite,code,dfn,em,strong,th,var{font-weight:normal; font-style:normal; }
+caption,th{text-align:left; }
+h1,h2,h3,h4,h5,h6{font-weight:normal; font-size:100%; }
+q:before,q:after{content:''; }
+abbr,acronym{border:0; }
+label {cursor:pointer!important;cursor:hand}
+.clear{clear:both; height:0; overflow:hidden; font-size:0px;}
+.hand{cursor:pointer}
+p{padding-top:5px}
+.p_left{padding-left:10px;padding-top:5px;background:#eee;}
+.easyui-accordion img{border:0;padding-right:5px}
+a{text-decoration:none;color:black;}
+a:hover{text-decoration:none;}
+.strong{font-weight:bold;}
+/*字色*/
+.txta{color:#f00;}
+.txtb{color:#07519a;}
+.txtc{color:#999;}
+/*框架*/
+.main{width:99%;margin:0 auto;}
+.s_con input{width:80px}
+.s_con select{width:50px}
+.supplierinfo tr td{height:30px}
+.supplierinfo input{width:100px}
+.con_table  tr td{height:23px}
+.con_td{width:70px;text-align:right}

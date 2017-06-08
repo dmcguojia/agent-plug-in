@@ -1,0 +1,76 @@
+
+* {
+	margin: 0;
+	padding: 0
+}
+
+.droplinebar {
+	position: absolute;
+	z-index: 40;
+	widht:100%;
+}
+
+.droplinebar ul.dropmenu {
+	position: relative;
+	height:40px; 
+}
+
+.droplinebar ul {
+	float: left;
+	font: bold 13px Arial;
+	background: #242c54 url(bluedefault.gif) center center repeat-x;
+	/*default background of menu bar*/
+}
+
+.droplinebar ul li {
+	float: left;
+}
+
+.droplinebar ul ul {
+	display: none;
+	z-index: 100;
+	position: absolute;
+	left: 0;
+	background: #303c76;
+	zoom: 1;
+}
+
+.droplinebar .dropmenu li.hasmenu div{
+	background: red;
+	width:1366px;
+}	
+.droplinebar .dropmenu li.hasmenu  div ul {
+	background: black; 
+}	
+
+.droplinebar ul li a {
+	float: left;
+	color: white;
+	padding: 9px 11px;
+	text-decoration: none;
+	display: block;
+}
+
+.droplinebar ul li.hasmenu a img {
+	border: none;
+	margin-left: 5px;
+}
+
+.droplinebar ul li a:hover,.droplinebar ul li .current {
+	/*background of main menu bar links onMouseover*/
+	color: white;
+	background: transparent url(blueactive.gif) center center repeat-x;
+}
+
+/* Sub level menu links style */
+.droplinebar ul li ul li a {
+	font: normal 13px Verdana;
+	padding: 6px;
+	margin: 0;
+	border-bottom: 1px solid navy;
+}
+
+.droplinebar ul li ul li a:hover {
+	/*sub menu links' background color onMouseover */
+	background: #242c54;
+}
