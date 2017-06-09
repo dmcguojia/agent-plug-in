@@ -14,7 +14,7 @@ public class BaseBean implements Serializable{
 	private static final long serialVersionUID = -6050486651391004601L;
 	private String action;
 	private String requestId;
-	private String timestamp;
+	private String timestamp = System.currentTimeMillis()+"";
 	private Object body;
 	public String getAction() {
 		return action;
