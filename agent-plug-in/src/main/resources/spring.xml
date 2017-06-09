@@ -33,7 +33,7 @@
 	<bean id="logHelper" class="cn.com.agent.utils.LogHelper"/>
 	<aop:config>
 	    <aop:aspect ref="logHelper">
-	        <aop:pointcut id="pointcut" expression="execution(* com.zcbspay.platform.manager..*.*(..))"/>
+	        <aop:pointcut id="pointcut" expression="execution(* cn.com.agent..*.*(..))"/>
 	        <aop:before method="before"  pointcut-ref="pointcut" />
 	        <aop:after method="after" pointcut-ref="pointcut" />
 	        <aop:around method="around"  pointcut-ref="pointcut" />
