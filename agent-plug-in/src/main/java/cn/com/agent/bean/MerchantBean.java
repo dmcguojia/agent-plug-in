@@ -1,5 +1,7 @@
 package cn.com.agent.bean;
 
+import java.io.Serializable;
+
 import cn.com.agent.bean.merch.MercBusiBean;
 import cn.com.agent.bean.merch.MercFeeBean;
 import cn.com.agent.bean.merch.MercFileBean;
@@ -7,7 +9,7 @@ import cn.com.agent.bean.merch.MercInfoBean;
 import cn.com.agent.bean.merch.MercMactBean;
 import cn.com.agent.bean.merch.MercMcntBean;
 
-public class MerchantBean {
+public class MerchantBean implements Serializable{
 	private MercInfoBean mercInfo;// 会员基本信息
 	private MercBusiBean mercBusi;// 会员营业信息
 	private MercMcntBean mercMcnt;// 联系人信息
@@ -51,6 +53,21 @@ public class MerchantBean {
 	}
 	public void setMercFee(MercFeeBean mercFee) {
 		this.mercFee = mercFee;
+	}
+	public MerchantBean(MercInfoBean mercInfo, MercBusiBean mercBusi,
+			MercMcntBean mercMcnt, MercFileBean mercFile,
+			MercMactBean mercMact, MercFeeBean mercFee) {
+		super();
+		this.mercInfo = mercInfo;
+		this.mercBusi = mercBusi;
+		this.mercMcnt = mercMcnt;
+		this.mercFile = mercFile;
+		this.mercMact = mercMact;
+		this.mercFee = mercFee;
+	}
+	public MerchantBean() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 	
 	

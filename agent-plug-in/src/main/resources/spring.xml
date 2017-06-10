@@ -40,4 +40,5 @@
 	        <aop:after-throwing method="throwException" pointcut-ref="pointcut" throwing="ex" />
 	    </aop:aspect>
 	</aop:config>
+	<import resource="classpath:spring-hibernate.xml"/>
 </beans>
