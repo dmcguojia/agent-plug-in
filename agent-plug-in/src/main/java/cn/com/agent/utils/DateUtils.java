@@ -72,6 +72,14 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		return parseDate(str, new String[] { parsePatterns });
 	}
 
+	public static String getCurrentYear(){
+		SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+		return yearFormat.format(new Date());
+	}
+	public static String getCurrentMonth(){
+		SimpleDateFormat yearFormat = new SimpleDateFormat("MM");
+		return yearFormat.format(new Date());
+	}
 	/**
 	 * 根据单位字段比较两个日期
 	 * 
@@ -244,7 +252,9 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 	public static String getLongDateStr(Timestamp time) {
 		return LONG_DATE_FORMAT.format(time);
 	}
-
+	public static String getShortDateStr(Timestamp time) {
+		return SHORTDATEFORMAT.format(time);
+	}
 	/**
 	 * 得到短日期格式字串
 	 * 

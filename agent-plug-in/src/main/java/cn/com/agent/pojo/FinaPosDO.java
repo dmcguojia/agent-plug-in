@@ -50,8 +50,7 @@ public class FinaPosDO implements java.io.Serializable {
 	
 	private String source;
 	private Long apiLogId;
-
-	private MerchantDO merchant;
+	private String backupStatus;
 	// Constructors
 
 	/** default constructor */
@@ -371,14 +370,15 @@ public class FinaPosDO implements java.io.Serializable {
 	public void setApiLogId(Long apiLogId) {
 		this.apiLogId = apiLogId;
 	}
-
-	public MerchantDO getMerchant() {
-		return merchant;
+	@Column(name = "BACKUP_STATUS")
+	public String getBackupStatus() {
+		return backupStatus;
 	}
 
-	public void setMerchant(MerchantDO merchant) {
-		this.merchant = merchant;
+	public void setBackupStatus(String backupStatus) {
+		this.backupStatus = backupStatus;
 	}
+
 	
 	
 }

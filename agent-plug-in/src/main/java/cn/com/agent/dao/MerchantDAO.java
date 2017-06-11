@@ -2,9 +2,12 @@ package cn.com.agent.dao;
 
 import java.util.Map;
 
+import cn.com.agent.bean.RateBean;
 import cn.com.agent.bean.query.MerchantQueryBean;
 import cn.com.agent.dao.base.BaseDAO;
+import cn.com.agent.pojo.CityDO;
 import cn.com.agent.pojo.MerchantDO;
+import cn.com.agent.pojo.ProvinceDO;
 
 public interface MerchantDAO extends BaseDAO<MerchantDO>{
 
@@ -23,4 +26,16 @@ public interface MerchantDAO extends BaseDAO<MerchantDO>{
 	 * @return
 	 */
 	public MerchantDO getMerchanByMerchNo(String merchNo);
+	
+	/**
+	 * 查询银行信息
+	 * @param bankNode
+	 * @return
+	 */
+	public Map<String, Object> queryBankInfo(String bankNode);
+	
+	public ProvinceDO queryProvinceById(long tid);
+	public CityDO queryCityById(long tid);
+	
+	public RateBean getMerchantRate(String busiPackCode);
 }

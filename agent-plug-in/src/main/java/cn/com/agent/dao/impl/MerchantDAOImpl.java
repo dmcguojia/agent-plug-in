@@ -4,18 +4,28 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.google.common.collect.Maps;
-
+import cn.com.agent.bean.RateBean;
+import cn.com.agent.bean.enums.SelfFeeTypeEnum;
 import cn.com.agent.bean.query.MerchantQueryBean;
 import cn.com.agent.dao.MerchantDAO;
 import cn.com.agent.dao.base.impl.HibernateBaseDAOImpl;
+import cn.com.agent.pojo.CityDO;
+import cn.com.agent.pojo.DedurateCaseDO;
+import cn.com.agent.pojo.MccRateDO;
 import cn.com.agent.pojo.MerchantDO;
+import cn.com.agent.pojo.ProvinceDO;
+import cn.com.agent.pojo.TxnRateDO;
+import cn.com.agent.utils.BeanCopyUtil;
+
+import com.google.common.collect.Maps;
 
 @Repository
 public class MerchantDAOImpl extends HibernateBaseDAOImpl<MerchantDO> implements MerchantDAO{
@@ -52,5 +62,59 @@ public class MerchantDAOImpl extends HibernateBaseDAOImpl<MerchantDO> implements
 		Criteria criteria = getSession().createCriteria(MerchantDO.class);
 		criteria.add(Restrictions.eq("merchNo", merchNo));
 		return (MerchantDO) criteria.uniqueResult();
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Map<String, Object> queryBankInfo(String bankNode){
+		SQLQuery sqlQuery = (SQLQuery) getSession().createSQLQuery("select * from t_bank_info t where t.bank_node=?").setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+		sqlQuery.setParameter(0, bankNode);
+		Map<String, Object> uniqueResult = (Map<String, Object>) sqlQuery.uniqueResult();
+		return uniqueResult;
+	}
+	@Override
+	@Transactional(readOnly=true)
+	public ProvinceDO queryProvinceById(long tid){
+		Criteria criteria = getSession().createCriteria(ProvinceDO.class);
+		criteria.add(Restrictions.eq("PId", tid));
+		return (ProvinceDO) criteria.uniqueResult();
+	}
+	@Override
+	@Transactional(readOnly=true)
+	public CityDO queryCityById(long tid){
+		Criteria criteria = getSession().createCriteria(CityDO.class);
+		criteria.add(Restrictions.eq("CId", tid));
+		return (CityDO) criteria.uniqueResult();
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public RateBean getMerchantRate(String busiPackCode){
+		RateBean rateBean = null;
+		Criteria criteria = getSession().createCriteria(DedurateCaseDO.class);
+		criteria.add(Restrictions.eq("busiPackCode", busiPackCode));
+		criteria.add(Restrictions.eq("busicode", "0201"));
+		DedurateCaseDO dedurateCase = (DedurateCaseDO) criteria.uniqueResult();
+		criteria = null;
+		SelfFeeTypeEnum selfFeeTypeEnum = SelfFeeTypeEnum.fromValue(dedurateCase.getSelfFeeType().toString());
+		if(selfFeeTypeEnum==SelfFeeTypeEnum.free){
+			rateBean = new RateBean();
+			rateBean.setFeeRate(0.0);
+			rateBean.setMaxFee(0.0);
+			rateBean.setMinFee(0.0);
+		}else if(selfFeeTypeEnum==SelfFeeTypeEnum.txn){
+			criteria = getSession().createCriteria(TxnRateDO.class);
+			criteria.add(Restrictions.eq("busipackcode", busiPackCode));
+			criteria.add(Restrictions.eq("busicode", "0201"));
+			TxnRateDO txnRateDO = (TxnRateDO) criteria.uniqueResult();
+			rateBean = BeanCopyUtil.copyBean(RateBean.class, txnRateDO);
+		}else if(selfFeeTypeEnum==SelfFeeTypeEnum.mcc){
+			criteria = getSession().createCriteria(MccRateDO.class);
+			criteria.add(Restrictions.eq("busipackcode", busiPackCode));
+			criteria.add(Restrictions.eq("busicode", "0201"));
+			MccRateDO mccRate = (MccRateDO) criteria.uniqueResult();
+			rateBean = BeanCopyUtil.copyBean(RateBean.class, mccRate);
+		}
+		return rateBean;
 	}
 }

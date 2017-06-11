@@ -28,7 +28,7 @@ public class TermController {
 	@RequestMapping("/showManager")
 	public ModelAndView showManager(String userId,HttpServletRequest request) {
 		ModelAndView result = new ModelAndView(
-				"/merchant/merchant_filing");
+				"/term/term_filing");
 		UserDO user = userDAO.getUserById(Long.valueOf(userId));
 		request.getSession().setAttribute("login_user", user);
 		return result;

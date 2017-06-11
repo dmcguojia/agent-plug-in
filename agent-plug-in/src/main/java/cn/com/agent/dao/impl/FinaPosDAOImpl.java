@@ -46,6 +46,8 @@ public class FinaPosDAOImpl extends HibernateBaseDAOImpl<FinaPosDO> implements F
 		}
 		criteria.add(Restrictions.eq("status", "00"));
 		criteria2.add(Restrictions.eq("status", "00"));
+		criteria.setFetchMode("merchant", org.hibernate.FetchMode.JOIN);
+		criteria2.setFetchMode("merchant", org.hibernate.FetchMode.JOIN);
 		criteria.setFirstResult((page - 1) * rows);  
 	    criteria.setMaxResults(rows); 
 	    
