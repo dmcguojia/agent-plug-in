@@ -16,8 +16,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<meta http-equiv="expires" content="0"/>    
 	<meta http-equiv="description" content="title"/>
 	 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-	<link rel="stylesheet" type="text/css" href="js/themes/cupertino/easyui.css"/>
-	<link rel="stylesheet" type="text/css" href="js/themes/icon.css"/>
+	<link rel="stylesheet" type="text/css" href="js/themes_backup/cupertino/easyui.css"/>
+	<link rel="stylesheet" type="text/css" href="js/themes_backup/icon.css"/>
 	<link rel="stylesheet" type="text/css" href="css/base.css"/>
 	<link rel="stylesheet" type="text/css" href="css/jquery.autocomplete.css"/>
 	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>

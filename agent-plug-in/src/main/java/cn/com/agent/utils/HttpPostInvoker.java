@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,15 +15,14 @@ import org.slf4j.LoggerFactory;
 public class HttpPostInvoker {
 	private static final Logger logger = LoggerFactory
 			.getLogger(HttpPostInvoker.class);
-
+	private static final  ResourceBundle RESOURCE = ResourceBundle.getBundle("paramater");
 	public static String invokeMethod(String sendStr) throws Exception {
 		logger.info("send msg:"+sendStr);
 		StringBuilder result = new StringBuilder("");
 		PrintWriter out = null;
 		BufferedReader in = null;
 		try {
-			URL realUrl = new URL(
-					"http://218.76.1.141:9092/mposquery/putAction.do");
+			URL realUrl = new URL(RESOURCE.getString("cardinfo.url"));
 			logger.info("send url:"+realUrl.getHost()+realUrl.getPath());
 			URLConnection conn = realUrl.openConnection();
 			conn.setRequestProperty("Accept-Charset", "gbk");

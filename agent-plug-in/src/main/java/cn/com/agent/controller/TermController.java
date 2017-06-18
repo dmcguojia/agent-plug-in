@@ -65,4 +65,28 @@ public class TermController {
 	public ResultBean backupUpdate(String termNo){
 		return termPOSBackUpService.backupUpdateTermPOS(termNo);
 	}
+	
+	@ResponseBody
+	@RequestMapping("/batchBackupTerm")
+	public ResultBean backupBatch(String termNo){
+		ResultBean resultBean = new ResultBean();
+		String[] termNoArray = termNo.split(";");
+		StringBuffer errorInfoBuffer = new StringBuffer();
+		for(String term : termNoArray){
+			ResultBean backupResultBean = termPOSBackUpService.backupAddTermPOS(term);
+			if(!"0000".equals(backupResultBean.getRetCode())){
+				errorInfoBuffer.append("终端【"+term+"】");
+				errorInfoBuffer.append(backupResultBean.getRetInfo());
+				errorInfoBuffer.append(";");
+			}
+		}
+		if(errorInfoBuffer.length()>0){
+			resultBean.setRetCode("9999");
+			resultBean.setRetInfo(errorInfoBuffer.toString());
+		}else {
+			resultBean.setRetCode("0000");
+			resultBean.setRetInfo("报备成功");
+		}
+		return resultBean;
+	}
 }

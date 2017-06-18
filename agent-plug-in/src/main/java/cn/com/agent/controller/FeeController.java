@@ -100,7 +100,7 @@ public class FeeController {
 	 */
 	@ResponseBody
 	@RequestMapping("saveCardRate")
-	public String saveCardRate(CardRateBean cardRateEntity, HttpServletRequest request, HttpServletResponse response) {
+	public Object saveCardRate(CardRateBean cardRateEntity, HttpServletRequest request, HttpServletResponse response) {
 		cardRateEntity.setInuser(UserHelper.getCurrentUser(request).getUserId());
 		return feeDAO.addOneCardRate(cardRateEntity);
 		//JsonUtils.json_encodeAndWrite(response, mark);
@@ -108,7 +108,7 @@ public class FeeController {
 	
 	@ResponseBody
 	@RequestMapping("updateCardRate")
-	public String updateCardRate(CardRateBean cardRateEntity, HttpServletRequest request, HttpServletResponse response) {
+	public Object updateCardRate(CardRateBean cardRateEntity, HttpServletRequest request, HttpServletResponse response) {
 		cardRateEntity.setInuser(UserHelper.getCurrentUser(request).getUserId());
 		return feeDAO.updateCardRate(cardRateEntity);
 		//JsonUtils.json_encodeAndWrite(response, mark);

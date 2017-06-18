@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import cn.com.agent.bean.BackupBean;
 import cn.com.agent.bean.ResultBean;
 import cn.com.agent.bean.query.MerchantQueryBean;
 import cn.com.agent.dao.MerchantDAO;
@@ -49,8 +50,9 @@ public class MerchantController {
 	}
 	@ResponseBody
 	@RequestMapping("/addBackupMerchant")
-	public ResultBean backupAdd(String merchNo){
-		return merchantBackUpService.backupAddMerchant(merchNo);
+	public ResultBean backupAdd(BackupBean backupBean){
+		//return merchantBackUpService.backupAddMerchant(backupBean.getMerchNo());
+		return merchantBackUpService.backupAddMerchant(backupBean);
 	}
 	@ResponseBody
 	@RequestMapping("/deleteBackupMerchant")
@@ -60,7 +62,8 @@ public class MerchantController {
 	
 	@ResponseBody
 	@RequestMapping("/updateBackupMerchant")
-	public ResultBean backupUpdate(String merchNo){
-		return merchantBackUpService.backupUpdateMerchant(merchNo);
+	public ResultBean backupUpdate(BackupBean backupBean){
+		//return merchantBackUpService.backupUpdateMerchant(backupBean.getMerchNo());
+		return merchantBackUpService.backupUpdateMerchant(backupBean);
 	}
 }

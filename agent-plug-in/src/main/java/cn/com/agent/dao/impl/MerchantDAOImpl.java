@@ -10,16 +10,21 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import cn.com.agent.bean.CreditCardRateBean;
+import cn.com.agent.bean.DebitCardRateBean;
 import cn.com.agent.bean.RateBean;
 import cn.com.agent.bean.enums.SelfFeeTypeEnum;
 import cn.com.agent.bean.query.MerchantQueryBean;
 import cn.com.agent.dao.MerchantDAO;
 import cn.com.agent.dao.base.impl.HibernateBaseDAOImpl;
+import cn.com.agent.pojo.CardRateDO;
 import cn.com.agent.pojo.CityDO;
 import cn.com.agent.pojo.DedurateCaseDO;
 import cn.com.agent.pojo.MccRateDO;
@@ -28,11 +33,13 @@ import cn.com.agent.pojo.ProvinceDO;
 import cn.com.agent.pojo.TxnRateDO;
 import cn.com.agent.utils.BeanCopyUtil;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 
 @Repository
 public class MerchantDAOImpl extends HibernateBaseDAOImpl<MerchantDO> implements MerchantDAO{
 
+	private static final Logger logger = LoggerFactory.getLogger(MerchantDAOImpl.class);
 	@Override
 	@Transactional(readOnly=true)
 	public Map<String, Object> queryMerchantByPage(MerchantQueryBean merchantQueryBean,Long page,Long rows){
@@ -101,6 +108,7 @@ public class MerchantDAOImpl extends HibernateBaseDAOImpl<MerchantDO> implements
 		criteria.add(Restrictions.eq("busiPackCode", busiPackCode));
 		criteria.add(Restrictions.eq("busicode", "0201"));
 		DedurateCaseDO dedurateCase = (DedurateCaseDO) criteria.uniqueResult();
+		logger.info("dedurateCase:"+JSON.toJSONString(dedurateCase));
 		criteria = null;
 		SelfFeeTypeEnum selfFeeTypeEnum = SelfFeeTypeEnum.fromValue(dedurateCase.getSelfFeeType().toString());
 		if(selfFeeTypeEnum==SelfFeeTypeEnum.free){
@@ -113,14 +121,32 @@ public class MerchantDAOImpl extends HibernateBaseDAOImpl<MerchantDO> implements
 			criteria.add(Restrictions.eq("busipackcode", busiPackCode));
 			criteria.add(Restrictions.eq("busicode", "0201"));
 			TxnRateDO txnRateDO = (TxnRateDO) criteria.uniqueResult();
+			logger.info("txnRateDO:"+JSON.toJSONString(txnRateDO));
 			rateBean = BeanCopyUtil.copyBean(RateBean.class, txnRateDO);
 		}else if(selfFeeTypeEnum==SelfFeeTypeEnum.mcc){
 			criteria = getSession().createCriteria(MccRateDO.class);
 			criteria.add(Restrictions.eq("busipackcode", busiPackCode));
 			criteria.add(Restrictions.eq("mcc", mcc));
 			MccRateDO mccRate = (MccRateDO) criteria.uniqueResult();
+			logger.info("mccRate:"+JSON.toJSONString(mccRate));
 			rateBean = BeanCopyUtil.copyBean(RateBean.class, mccRate);
+		}else if(selfFeeTypeEnum==SelfFeeTypeEnum.card){
+			rateBean = new RateBean();
+			criteria = getSession().createCriteria(CardRateDO.class);
+			criteria.add(Restrictions.eq("feever", org.apache.commons.lang.StringUtils.rightPad(busiPackCode, 8, " ")));
+			criteria.add(Restrictions.eq("busicode", org.apache.commons.lang.StringUtils.rightPad("0201", 8, " ")));
+			List<CardRateDO> cardRateList = criteria.list();
+			logger.info("cardRateList:"+JSON.toJSONString(cardRateList));
+			for(CardRateDO cardRate : cardRateList){
+				if(cardRate.getCardtype()==1){//借记卡
+					rateBean.setDebitCardRateBean(BeanCopyUtil.copyBean(DebitCardRateBean.class, cardRate));
+				}else if(cardRate.getCardtype()==2){//贷记卡
+					rateBean.setCreditCardRateBean(BeanCopyUtil.copyBean(CreditCardRateBean	.class, cardRate));
+				}
+			}
+			//rateBean = BeanCopyUtil.copyBean(RateBean.class, mccRate);
 		}
+		rateBean.setSelfFeeTypeEnum(selfFeeTypeEnum);
 		return rateBean;
 	}
 	@Override

@@ -5,6 +5,32 @@
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 %>
+<style type="text/css">
+table tr td input {
+	height: 15px
+}
+
+table tr td select {
+	height: 20px
+}
+table tr td.head-title {
+	height: 25px;
+	background-color: #F0F8FF;
+	font-weight: bold;
+	border-width: 1px 1px 1px 1px;
+	border-style: groove;
+	padding-left:5px;
+}
+table tr td.add {
+	height: 25px;
+}
+table tr td.update {
+	height: 25px;
+	padding-left: 10px;
+	border-width: 1px 1px 1px 1px;
+	border-style: groove;
+}
+</style>
 <body>
 <div style="padding-top:2px;margin-left:2px;margin-right:2px" id="continer">
 	    <div id="p" class="easyui-panel" title="查询条件" style="height:90px;padding-top:5px;background:#fafafa;"  iconCls="icon-save" collapsible="true">
@@ -31,6 +57,75 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			</table>
 		</div>
 	</div>
+	
+	
+	<div id="w" class="easyui-window" closed="true" title="My Window"
+	iconCls="icon-save" style="width: 500px; height: 200px; padding: 5px;">
+	<div class="easyui-layout" fit="true">
+		<div region="center" border="false"
+			style="padding: 10px; background: #fff; border: 1px solid #ccc; text-align: center">
+			<form id="backupForm" action="merchant/addBackupMerchant" method="post">
+			<input type="hidden" id="merchNo_f" name="merchNo"/>
+				<table width="100%" cellpadding="2" cellspacing="2" style="text-align: left">
+					<tr>
+						<td colspan="4" class="head-title">结算账户信息</td>
+					</tr>
+					<tr>
+						<td class="update" width="15%">结算账号</td>
+						<td class="update" width="35%">
+							<span id="account_no"></span>
+						</td>
+						<td class="update" width="15%">账户名称</td>
+						<td class="update" width="35%">
+							<span id="account_name"></span>
+						</td>
+					</tr>
+					<tr>
+						<td class="update">结算账户类型</td>
+						<td colspan="3" class="update">
+							<select id="deductSign" name="deductSign"  class="easyui-validatebox" required="true" missingMessage="请选择结算账户类型">
+								<option value="">--请选择结算账户类型--</option>
+								<option value="0">对公</option>
+								<option value="1">对私</option>
+							</select>
+						</td>
+					</tr>
+					<tbody id="t0_body">
+					<tr>
+							<td colspan="4" class="head-title">D0交易手续费</td>
+						</tr>
+						<tr>
+							<td class="update">D0交易费率</td>
+							<td class="update">
+								<input id="d0FeeRat" name="d0FeeRat"/>（%）
+							</td>
+							<td class="update">D0交易固定手续费</td>
+							<td class="update">
+								<input id="d0FixedFee" name="d0FixedFee"/>（元）
+							</td>
+						</tr>
+						<tr>
+							<td class="update">D0交易最低手续费</td>
+							<td class="update">
+								<input id="d0MinFeeAmt" name="d0MinFeeAmt"/>（元）
+							</td>
+							<td class="update">D0交易封顶手续费</td>
+							<td class="update">
+								<input id="d0MaxFeeAmt" name="d0MaxFeeAmt"/>（元）
+							</td>
+						</tr>
+					</tbody>
+					
+				</table>
+			</form>
+		</div>
+		<div region="south" border="false"
+			style="text-align: center; padding: 5px 0;">
+			<a class="easyui-linkbutton" id="save_button" iconCls="icon-ok" href="javascript:sumitBackupMerchant()" onclick="">保存</a> 
+			<a class="easyui-linkbutton" id="cancel_button" iconCls="icon-cancel" href="javascript:void(0)" onclick="closeBackupWin()">取消</a>
+		</div>
+	</div>
+</div>
 	<script type="text/javascript">
 		$(function(){
 			$('#merchantList').datagrid({
@@ -85,12 +180,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					{field:'APPLY_MERCH_ID',title:'操作',align:'center',
 						formatter:function(value,rec){
 							if(rec.backupStatus=="01"){
-								return '<a href="javascript:backupAdd(\''+rec.merchNo+'\')" style="color:blue;">报备新增</a>'
+								return '<a href="javascript:backupAdd(\''+rec.merchNo+'\','+rec.setlCycle+')" style="color:blue;">报备新增</a>'
 							}else if(rec.backupStatus=="00"){
 								
-								return '<a href="javascript:backupUpdate(\''+rec.merchNo+'\')" style="color:blue;">报备修改</a>'
+								return '<a href="javascript:backupUpdate(\''+rec.merchNo+'\','+rec.setlCycle+')" style="color:blue;">报备修改</a>'
 								+"&nbsp;&nbsp;"+
-								'<a href="javascript:backupDelete(\''+rec.merchNo+'\')" style="color:blue;">报备删除</a>';	
+								'<a href="javascript:backupDelete(\''+rec.merchNo+'\','+rec.setlCycle+')" style="color:blue;">报备删除</a>';	
 							}else if(rec.backupStatus=="99"){
 								return "";	
 							}
@@ -116,37 +211,138 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			$('#searchForm :input').val('');
 		}
 		
-		function backupAdd(merchNo){
-			$.ajax({
-				type: "POST",
-				url: "merchant/addBackupMerchant?merchNo=" + merchNo,
-				dataType: "json",
-				success: function(json) {	
-					$.messager.alert("",json.retInfo,"info");
-					search();
-				}
+		function backupAdd(merchNo,setlCycle){
+			
+			$('#backupForm').attr("action","merchant/addBackupMerchant");
+			if(setlCycle > 0){
+				$("#t0_body").hide();
+				unvalidateD0();
+			}else{
+				$("#t0_body").show();
+				validateD0();
+			}
+			showBackupWin();
+		}
+		
+		function sumitBackupMerchant(){
+			var row = $('#merchantList').datagrid('getSelected');
+			$.messager.confirm('提示', '您是否要报备此商户?', function(r){
+                if (r){
+                	/* $.ajax({
+        				type: "POST",
+        				url: "merchant/addBackupMerchant?merchNo=" + row.merchNo,
+        				dataType: "json",
+        				success: function(json) {	
+        					$.messager.alert("",json.retInfo,"info");
+        					search();
+        				}
+        			}); */
+                	
+                	$('#backupForm').form('submit', {
+    					onSubmit: function() {
+    						return $('#backupForm').form('validate');
+    					},
+    					success: function(data) {
+    						var json =  JSON.parse(data);
+    						$.messager.alert("",json.retInfo,"info");
+    						search();
+    						closeBackupWin();
+    					}
+    				});
+                }
+            });
+			
+			
+		}
+		
+		
+		
+		function backupUpdate(merchNo,setlCycle){
+			$('#backupForm').attr("action","merchant/updateBackupMerchant");
+			if(setlCycle>0){
+				$("#t0_body").hide();
+				unvalidateD0();
+				
+			}else{
+				$("#t0_body").show();
+				validateD0();
+			}
+			showBackupWin();
+			
+		}
+		function backupDelete(merchNo,setlCycle){
+			 $.messager.confirm('提示', '您是否要删除此报备商户?', function(r){
+	                if (r){
+	                	$.ajax({
+	        				type: "POST",
+	        				url: "merchant/deleteBackupMerchant?merchNo=" + merchNo,
+	        				dataType: "json",
+	        				success: function(json) {	
+	        					$.messager.alert("",json.retInfo,"info");
+	        					search();
+	        				}
+	        			});
+	                }
+	            });
+			
+		}
+		
+		function showBackupWin(){
+			$('#w').window({
+				title: '商户报备信息',
+				top:150,
+		  		width: 800,
+		  		height: 260,
+				collapsible: false,
+				minimizable: false,
+				maximizable: false,
+				modal: true,
+				shadow: true,
+				closed: false
+			});
+			var row = $('#merchantList').datagrid('getSelected');
+			$("#account_no").html(row.accName);
+			$("#account_name").html(row.settleAccount);
+			$("#merchNo_f").val(row.merchNo);
+		}
+		function closeBackupWin(){
+			$('#w').window("close");
+		}
+		function validateD0(){
+			
+			$('#d0FeeRat').validatebox({
+			    required: true,
+			    missingMessage:"请填写D0交易费率"
+			});
+			$('#d0FixedFee').validatebox({
+			    required: true,
+			    missingMessage:"D0交易费率D0交易固定手续费"
+			});
+			$('#d0MinFeeAmt').validatebox({
+			    required: true,
+			    missingMessage:"D0交易费率D0交易最低手续费"
+			});
+			$('#d0MaxFeeAmt').validatebox({
+			    required: true,
+			    missingMessage:"D0交易费率D0交易封顶手续费"
 			});
 		}
-		function backupUpdate(merchNo){
-			$.ajax({
-				type: "POST",
-				url: "merchant/updateBackupMerchant?merchNo=" + merchNo,
-				dataType: "json",
-				success: function(json) {	
-					$.messager.alert("",json.retInfo,"info");
-					search();
-				}
+		function unvalidateD0(){
+			$('#d0FeeRat').validatebox({
+			    required: false,
+			    missingMessage:"请填写D0交易费率"
 			});
-		}
-		function backupDelete(merchNo){
-			$.ajax({
-				type: "POST",
-				url: "merchant/deleteBackupMerchant?merchNo=" + merchNo,
-				dataType: "json",
-				success: function(json) {	
-					$.messager.alert("",json.retInfo,"info");
-					search();
-				}
+			$('#d0FixedFee').validatebox({
+			    required: false,
+			    missingMessage:"D0交易费率D0交易固定手续费"
+			});
+			$('#d0MinFeeAmt').validatebox({
+			    required: false,
+			    missingMessage:"D0交易费率D0交易最低手续费"
+			});
+			$('#d0MaxFeeAmt').validatebox({
+			    required: false,
+			    missingMessage:"D0交易费率D0交易封顶手续费"
 			});
 		}
 	</script>

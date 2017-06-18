@@ -50,12 +50,12 @@ public interface FeeDAO extends BaseDAO<Object>{
 	 * @param cardRateEntity
 	 * @return
 	 */
-	public String addOneCardRate(CardRateBean cardRateEntity);
+	public Map<String, Object> addOneCardRate(CardRateBean cardRateEntity);
 
 	/**
 	 * 
 	 * @param cardrate
 	 * @return
 	 */
-	public String updateCardRate(CardRateBean cardrate);
+	public Map<String, Object> updateCardRate(CardRateBean cardrate);
 }

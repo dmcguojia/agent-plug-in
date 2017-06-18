@@ -37,9 +37,10 @@ $(function(){
 		title:'终端列表',
 		iconCls:'icon-save',
 		height:400,
-		singleSelect:true,
+		singleSelect:false,
 		url:"term/queryTerm",
 		columns:[[
+			{title:'',checkbox:true},
 			{field:'termNo',title:'终端编号',align:'center',width:100},
 	    	//{field:'merchName',title:'商户名称',width:100,align:'center'},
 		    {field:'merchNo',title:'商户编号',width:120,align:'center'},
@@ -47,7 +48,18 @@ $(function(){
  			{field:'serialNum',title:'终端序列号',width:100,align:'center'},									
 			{field:'jjtzfparaName',title:'机具投资方',width:120,align:'center'},
 			{field:'instAddr',title:'安装地址',width:120,align:'center'},
- 			{field:'status',title:'状态',width:120,align:'center'},
+ 			{field:'status',title:'状态',width:120,align:'center',
+				formatter:function(value,rec){
+					if(value=="00"){
+						return "在用";	
+					}else if(value=="42"){
+						return "停机";	
+					}else if(value=="62"){
+						return "撤机";	
+					}
+						
+				}		
+ 			},
  			{field:'backupStatus',title:'报备状态',width:80,align:'center',
 				formatter:function(value,rec){
 					if(value=="01"){
@@ -77,7 +89,15 @@ $(function(){
 			}
 		]],
 		pagination:true,
-		rownumbers:true
+		rownumbers:true,
+		toolbar: [{
+			id: 'btnadd',
+			text: '批量报备',
+			iconCls: 'icon-add',
+			handler: function() {
+				batchBackUp();
+			}
+		}]
 	});
 })
 function search(){
@@ -89,37 +109,78 @@ function resize(){
 }
 
 function backupAdd(termNo){
-	$.ajax({
-		type: "POST",
-		url: "term/addBackupTerm?termNo=" + termNo,
-		dataType: "json",
-		success: function(json) {	
-			$.messager.alert("",json.retInfo,"info");
-			search();
-		}
-	});
+	$.messager.confirm('提示', '您是否要报备此终端?', function(r){
+        if (r){
+        	$.ajax({
+        		type: "POST",
+        		url: "term/addBackupTerm?termNo=" + termNo,
+        		dataType: "json",
+        		success: function(json) {	
+        			$.messager.alert("",json.retInfo,"info");
+        			search();
+        		}
+        	});
+        }
+    });
+	
 }
 function backupUpdate(termNo){
-	$.ajax({
-		type: "POST",
-		url: "term/updateBackupTerm?termNo=" + termNo,
-		dataType: "json",
-		success: function(json) {	
-			$.messager.alert("",json.retInfo,"info");
-			search();
-		}
-	});
+	$.messager.confirm('提示', '您是否要更新此报备终端?', function(r){
+        if (r){
+        	$.ajax({
+        		type: "POST",
+        		url: "term/updateBackupTerm?termNo=" + termNo,
+        		dataType: "json",
+        		success: function(json) {	
+        			$.messager.alert("",json.retInfo,"info");
+        			search();
+        		}
+        	});
+        }
+    });
+	
 }
 function backupDelete(termNo){
-	$.ajax({
-		type: "POST",
-		url: "term/deleteBackupTerm?termNo=" + termNo,
-		dataType: "json",
-		success: function(json) {	
-			$.messager.alert("",json.retInfo,"info");
-			search();
-		}
-	});
+	$.messager.confirm('提示', '您是否要删除此报备终端?', function(r){
+        if (r){
+        	$.ajax({
+        		type: "POST",
+        		url: "term/deleteBackupTerm?termNo=" + termNo,
+        		dataType: "json",
+        		success: function(json) {	
+        			$.messager.alert("",json.retInfo,"info");
+        			search();
+        		}
+        	});
+        }
+    });
+}
+function batchBackUp(){
+	var rows = $('#posList').datagrid('getSelections');
+	var termNo = "";
+	$.each(rows, function(key, value) {
+		termNo += value.termNo+";";
+	})
+	if(termNo==""){
+		$.messager.alert("","请选择终端","info");
+		
+	}else{
+		$.messager.confirm('提示', '您是否要报备此匹终端?', function(r){
+	        if (r){
+	        	$.ajax({
+	        		type: "POST",
+	        		url: "term/batchBackupTerm",
+	        		data:"termNo=" + termNo,
+	        		dataType: "json",
+	        		success: function(json) {	
+	        			$.messager.alert("",json.retInfo,"info");
+	        			search();
+	        		}
+	        	});
+	        }
+	    });
+	}
+	
 }
 </script>
 </body>

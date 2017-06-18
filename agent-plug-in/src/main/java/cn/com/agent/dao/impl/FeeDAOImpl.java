@@ -72,7 +72,7 @@ public class FeeDAOImpl extends HibernateBaseDAOImpl<Object> implements FeeDAO {
 	}
 
 	@Override
-	public String addOneCardRate(CardRateBean cardrate) {
+	public Map<String, Object> addOneCardRate(CardRateBean cardrate) {
 		String[] columns = new String[] { 
 				 "v_feever",
 			      "v_busicode",
@@ -96,12 +96,11 @@ public class FeeDAOImpl extends HibernateBaseDAOImpl<Object> implements FeeDAO {
 				cardrate.getInuser(), 
 				cardrate.getNotes(), 
 				cardrate.getRemarks() };
-		Object total = executeOracleProcedure("{CALL MODI_T_CARD_RATE.ins_t_card_rate(?,?,?,?,?,?,?,?,?,?,?)}", columns,
-				paramaters, "cursor0").get(0).get("INFO");
-		return (String) total;
+		return executeOracleProcedure("{CALL MODI_T_CARD_RATE.ins_t_card_rate(?,?,?,?,?,?,?,?,?,?,?)}", columns,
+				paramaters, "cursor0").get(0);
 	}
 	@Override
-	public String updateCardRate(CardRateBean cardrate) {
+	public Map<String, Object> updateCardRate(CardRateBean cardrate) {
 		Object[] paramaters = new Object[] { cardrate.getFeever(), cardrate.getBusicode(), cardrate.getCardtype(),
 				cardrate.getFeeRateStr(), 
 				cardrate.getMinFeeStr() == null ? "0" : cardrate.getMinFeeStr(),
@@ -109,8 +108,7 @@ public class FeeDAOImpl extends HibernateBaseDAOImpl<Object> implements FeeDAO {
 				cardrate.getInuser(), cardrate.getNotes(), cardrate.getRemarks() };
 		String[] columns = new String[] { "v_feever", "v_busicode", "v_cardtype", "v_fee_rate", "v_min_fee",
 				"v_max_fee", "v_rate_type", "v_inuser", "v_notes", "v_remarks" };
-		Object total = executeOracleProcedure("{CALL MODI_T_CARD_RATE.upt_t_card_rate(?,?,?,?,?,?,?,?,?,?,?)}", columns,
-				paramaters, "cursor0").get(0).get("INFO");
-		return (String) total;
+		return executeOracleProcedure("{CALL MODI_T_CARD_RATE.upt_t_card_rate(?,?,?,?,?,?,?,?,?,?,?)}", columns,
+				paramaters, "cursor0").get(0);
 	}
 }

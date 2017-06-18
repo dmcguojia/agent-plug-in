@@ -307,18 +307,14 @@ table tr td.head-title {
 						return $('#txnRateForm').form('validate');
 					},
 					success: function(data) {
-						if (data == '添加成功!') {
-							$.messager.alert("",data,"info");
+						var json =  JSON.parse(data);
+						$.messager.alert("",json.INFO,"info");
+						if(json.RET=="succ"){
 							closeAdd();
 							search();
-						} else if (data == '修改成功!') {
-							$.messager.alert("",data,"info");
-							closeAdd();
-							search();
-						} else {
-							$.messager.alert("",data,"info");
-							$("#save_button").linkbutton('enable');
 						}
+						$("#save_button").linkbutton('enable');
+						
 
 					}
 				});

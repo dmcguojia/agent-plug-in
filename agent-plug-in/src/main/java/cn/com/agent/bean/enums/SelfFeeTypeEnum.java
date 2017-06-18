@@ -1,11 +1,13 @@
 package cn.com.agent.bean.enums;
 
 
+
 public enum SelfFeeTypeEnum {
 
 	free("0"),
 	txn("1"),
-	mcc("2");
+	mcc("2"),
+	card("5");
 	private String code;
 
 	private SelfFeeTypeEnum(String code) {
