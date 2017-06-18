@@ -16,12 +16,14 @@ public class HttpPostInvoker {
 			.getLogger(HttpPostInvoker.class);
 
 	public static String invokeMethod(String sendStr) throws Exception {
+		logger.info("send msg:"+sendStr);
 		StringBuilder result = new StringBuilder("");
 		PrintWriter out = null;
 		BufferedReader in = null;
 		try {
 			URL realUrl = new URL(
-					"http://intelli.cardinfo.com.cn:17008/mposquery/putAction.do");
+					"http://218.76.1.141:9092/mposquery/putAction.do");
+			logger.info("send url:"+realUrl.getHost()+realUrl.getPath());
 			URLConnection conn = realUrl.openConnection();
 			conn.setRequestProperty("Accept-Charset", "gbk");
 			conn.setRequestProperty("contentType", "gbk");

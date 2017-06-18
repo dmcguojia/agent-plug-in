@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import cn.com.agent.bean.ResultBean;
 import cn.com.agent.bean.query.MerchantQueryBean;
 import cn.com.agent.dao.MerchantDAO;
 import cn.com.agent.dao.UserDAO;
 import cn.com.agent.pojo.UserDO;
+import cn.com.agent.service.MerchantBackUpService;
 
 @Controller
 @RequestMapping("/merchant")
@@ -23,6 +25,8 @@ public class MerchantController {
 	private MerchantDAO merchantDAO;
 	@Autowired
 	private UserDAO userDAO;
+	@Autowired
+	private MerchantBackUpService merchantBackUpService;
 	@ResponseBody
 	@RequestMapping("/showManager")
 	public ModelAndView showManager(String userId,HttpServletRequest request) {
@@ -42,5 +46,21 @@ public class MerchantController {
 		UserDO user = (UserDO) request.getSession().getAttribute("login_user");
 		merchantQueryBean.setUserId(user.getUserId());
 		return merchantDAO.queryMerchantByPage(merchantQueryBean, page, rows);
+	}
+	@ResponseBody
+	@RequestMapping("/addBackupMerchant")
+	public ResultBean backupAdd(String merchNo){
+		return merchantBackUpService.backupAddMerchant(merchNo);
+	}
+	@ResponseBody
+	@RequestMapping("/deleteBackupMerchant")
+	public ResultBean backupDelete(String merchNo){
+		return merchantBackUpService.backupDeleteMerchant(merchNo);
+	}
+	
+	@ResponseBody
+	@RequestMapping("/updateBackupMerchant")
+	public ResultBean backupUpdate(String merchNo){
+		return merchantBackUpService.backupUpdateMerchant(merchNo);
 	}
 }

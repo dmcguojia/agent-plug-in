@@ -12,6 +12,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "T_MERCHANT_BACKUP_LOG")
 public class MerchantBackupLogDO implements Serializable{
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = -5717260160472731370L;
 	private Long tid;
 	private String action;
 	private String requestId;

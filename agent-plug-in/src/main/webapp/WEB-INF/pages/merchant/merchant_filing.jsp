@@ -117,13 +117,37 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		}
 		
 		function backupAdd(merchNo){
-			
+			$.ajax({
+				type: "POST",
+				url: "merchant/addBackupMerchant?merchNo=" + merchNo,
+				dataType: "json",
+				success: function(json) {	
+					$.messager.alert("",json.retInfo,"info");
+					search();
+				}
+			});
 		}
 		function backupUpdate(merchNo){
-			
+			$.ajax({
+				type: "POST",
+				url: "merchant/updateBackupMerchant?merchNo=" + merchNo,
+				dataType: "json",
+				success: function(json) {	
+					$.messager.alert("",json.retInfo,"info");
+					search();
+				}
+			});
 		}
 		function backupDelete(merchNo){
-			
+			$.ajax({
+				type: "POST",
+				url: "merchant/deleteBackupMerchant?merchNo=" + merchNo,
+				dataType: "json",
+				success: function(json) {	
+					$.messager.alert("",json.retInfo,"info");
+					search();
+				}
+			});
 		}
 	</script>
 </body>

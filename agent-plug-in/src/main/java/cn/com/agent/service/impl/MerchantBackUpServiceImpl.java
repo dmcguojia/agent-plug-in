@@ -22,21 +22,28 @@ import cn.com.agent.bean.merch.MercFileBean;
 import cn.com.agent.bean.merch.MercInfoBean;
 import cn.com.agent.bean.merch.MercMactBean;
 import cn.com.agent.bean.merch.MercMcntBean;
+import cn.com.agent.dao.MerchantBackupLogDAO;
 import cn.com.agent.dao.MerchantDAO;
+import cn.com.agent.pojo.MerchantBackupLogDO;
 import cn.com.agent.pojo.MerchantDO;
 import cn.com.agent.service.MerchantBackUpService;
 import cn.com.agent.utils.DateUtils;
 import cn.com.agent.utils.HttpPostInvoker;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Maps;
 
 @Service
 public class MerchantBackUpServiceImpl implements MerchantBackUpService{
 
 	@Autowired
 	private MerchantDAO merchantDAO;
+	@Autowired
+	private MerchantBackupLogDAO merchantBackupLogDAO; 
 	//代理商编号
-	private final static String orgId="SHANDONG";
+	//private final static String orgId="SHANDONG";
+	private final static String orgId="4801666000";
+	
 	@Override
 	public ResultBean backupAddMerchant(String merchNo) {
 		ResultBean resultBean = new ResultBean();
@@ -57,11 +64,34 @@ public class MerchantBackUpServiceImpl implements MerchantBackUpService{
 		baseBean.setBody(merchantBean);
 		baseBean.setAction(APICodeEnum.MEMBER_ADDANDMODIFY.getCode());
 		baseBean.setRequestId(UUID.randomUUID().toString().replaceAll("-", "").toUpperCase());
+		Map<String, Object> newHashMap = Maps.newHashMap();
+		Map<String, Object> parseObject1 = JSON.parseObject(JSON.toJSONString(mercInfo), Map.class);
+		Map<String, Object> parseObject2 = JSON.parseObject(JSON.toJSONString(mercBusi), Map.class);
+		Map<String, Object> parseObject3 = JSON.parseObject(JSON.toJSONString(mercMcnt), Map.class);
+		Map<String, Object> parseObject4 = JSON.parseObject(JSON.toJSONString(mercFile), Map.class);
+		Map<String, Object> parseObject5 = JSON.parseObject(JSON.toJSONString(mercMact), Map.class);
+		Map<String, Object> parseObject6 = JSON.parseObject(JSON.toJSONString(mercFee), Map.class);
+		newHashMap.putAll(parseObject1);
+		newHashMap.putAll(parseObject2);
+		newHashMap.putAll(parseObject3);
+		newHashMap.putAll(parseObject4);
+		newHashMap.putAll(parseObject5);
+		newHashMap.putAll(parseObject6);
+		
+		MerchantBackupLogDO merchantBackupLog = JSON.parseObject(JSON.toJSONString(newHashMap), MerchantBackupLogDO.class);
+		merchantBackupLog.setAction(baseBean.getAction());
+		merchantBackupLog.setRequestId(baseBean.getRequestId());
+		merchantBackupLog.setTimestamp(baseBean.getTimestamp());
+		merchantBackupLogDAO.saveMerchantBackupLog(merchantBackupLog);
 		try {
 			String returnMsg = HttpPostInvoker.invokeMethod("param="+JSON.toJSONString(baseBean));
 			ResponseBean responseBean = JSON.parseObject(returnMsg, ResponseBean.class);
+			if("0000".equals(responseBean.getCode())){
+				merchantDAO.updateMerchantBackupStatus(merchNo, "00");
+			}
 			resultBean.setRetCode(responseBean.getCode());
 			resultBean.setRetInfo(responseBean.getMessage());
+			merchantBackupLogDAO.updateMerchantBackupLog(baseBean.getRequestId(), responseBean);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -140,18 +170,18 @@ public class MerchantBackUpServiceImpl implements MerchantBackUpService{
 		Map<String, Object> bankInfo = merchantDAO.queryBankInfo(merchant.getDepositBank());
 		mercMact.setDpsbondBnkDesc(bankInfo.get("BANK_NAME").toString());			//银行名称
 		if(StringUtils.isEmpty(merchant.getDepositBankProvince())||StringUtils.isEmpty(merchant.getDepositBankCity())){//开户行省市为空时，用商户所在省市
-			mercMact.setDpsbondBnkProv(merchantDAO.queryProvinceById(merchant.getMerchProvince()).getPCode());			//开户行所在省
 			mercMact.setDpsbondBnkCity(merchantDAO.queryCityById(merchant.getMerchCity()).getXzCode());			//开户行所在市
+			mercMact.setDpsbondBnkProv(mercMact.getDpsbondBnkCity().substring(0,2));			//开户行所在省
 		}else{
-			mercMact.setDpsbondBnkProv(merchantDAO.queryProvinceById(merchant.getDepositBankProvince()).getPCode());			//开户行所在省
 			mercMact.setDpsbondBnkCity(merchantDAO.queryCityById(merchant.getDepositBankCity()).getXzCode());			//开户行所在市
+			mercMact.setDpsbondBnkProv(mercMact.getDpsbondBnkCity().substring(0,2));			//开户行所在省
 		}
 		
 		return mercMact;
 	}
 	private MercFeeBean generateMercFeeBean(MerchantDO merchant){
 		MercFeeBean mercFee = new MercFeeBean();
-		RateBean rateBean = merchantDAO.getMerchantRate(merchant.getBusiver());
+		RateBean rateBean = merchantDAO.getMerchantRate(merchant.getBusiver(),merchant.getBusiIndustry());
 		mercFee.setT1DebitFeeRat((rateBean.getFeeRate()/100)+"");			//借记卡T1交易费率（%）
 		mercFee.setT1DebitFixedFee("0");			//借记卡T1交易固定手续费（元）
 		mercFee.setT1DebitMinFeeAmt((rateBean.getMinFee()/100)+"");			//借记卡T1交易最低手续费（元） 
@@ -176,7 +206,50 @@ public class MerchantBackUpServiceImpl implements MerchantBackUpService{
 			resultBean.setRetInfo("无法修改商户报备信息");
 			return resultBean;
 		}
-		return null;
+		MercInfoBean mercInfo = generateMerchantBean(merchant);// 会员基本信息
+		MercBusiBean mercBusi = generateMercBusiBean(merchant);// 会员营业信息
+		MercMcntBean mercMcnt = generateMercMcntBean(merchant);// 联系人信息
+		MercFileBean mercFile = generateMercFileBean(merchant);// 会员证件信息
+		MercMactBean mercMact = generateMercMactBean(merchant);// 会员结算账户信息
+		MercFeeBean mercFee = generateMercFeeBean(merchant);
+		MerchantBean merchantBean = new MerchantBean(mercInfo, mercBusi, mercMcnt, mercFile, mercMact, mercFee);
+		BaseBean baseBean = new BaseBean();
+		baseBean.setBody(merchantBean);
+		baseBean.setAction(APICodeEnum.MEMBER_ADDANDMODIFY.getCode());
+		baseBean.setRequestId(UUID.randomUUID().toString().replaceAll("-", "").toUpperCase());
+		Map<String, Object> newHashMap = Maps.newHashMap();
+		Map<String, Object> parseObject1 = JSON.parseObject(JSON.toJSONString(mercInfo), Map.class);
+		Map<String, Object> parseObject2 = JSON.parseObject(JSON.toJSONString(mercBusi), Map.class);
+		Map<String, Object> parseObject3 = JSON.parseObject(JSON.toJSONString(mercMcnt), Map.class);
+		Map<String, Object> parseObject4 = JSON.parseObject(JSON.toJSONString(mercFile), Map.class);
+		Map<String, Object> parseObject5 = JSON.parseObject(JSON.toJSONString(mercMact), Map.class);
+		Map<String, Object> parseObject6 = JSON.parseObject(JSON.toJSONString(mercFee), Map.class);
+		newHashMap.putAll(parseObject1);
+		newHashMap.putAll(parseObject2);
+		newHashMap.putAll(parseObject3);
+		newHashMap.putAll(parseObject4);
+		newHashMap.putAll(parseObject5);
+		newHashMap.putAll(parseObject6);
+		
+		MerchantBackupLogDO merchantBackupLog = JSON.parseObject(JSON.toJSONString(newHashMap), MerchantBackupLogDO.class);
+		merchantBackupLog.setAction(baseBean.getAction());
+		merchantBackupLog.setRequestId(baseBean.getRequestId());
+		merchantBackupLog.setTimestamp(baseBean.getTimestamp());
+		merchantBackupLogDAO.saveMerchantBackupLog(merchantBackupLog);
+		try {
+			String returnMsg = HttpPostInvoker.invokeMethod("param="+JSON.toJSONString(baseBean));
+			ResponseBean responseBean = JSON.parseObject(returnMsg, ResponseBean.class);
+			if("0000".equals(responseBean.getCode())){
+				merchantDAO.updateMerchantBackupStatus(merchNo, "00");
+			}
+			resultBean.setRetCode(responseBean.getCode());
+			resultBean.setRetInfo(responseBean.getMessage());
+			merchantBackupLogDAO.updateMerchantBackupLog(baseBean.getRequestId(), responseBean);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultBean;
 	}
 	@Override
 	public ResultBean backupDeleteMerchant(String merchNo) {
@@ -187,7 +260,34 @@ public class MerchantBackUpServiceImpl implements MerchantBackUpService{
 			resultBean.setRetInfo("无法删除商户报备信息");
 			return resultBean;
 		}
-		return null;
+		Map<String, Object> msgMap = Maps.newHashMap();
+		msgMap.put("mercId", merchNo);
+		msgMap.put("orgId", orgId);
+		BaseBean baseBean = new BaseBean();
+		baseBean.setBody(msgMap);
+		baseBean.setAction(APICodeEnum.MEMBER_DELETE.getCode());
+		baseBean.setRequestId(UUID.randomUUID().toString().replaceAll("-", "").toUpperCase());
+		MerchantBackupLogDO merchantBackupLog = new MerchantBackupLogDO();
+		merchantBackupLog.setAction(baseBean.getAction());
+		merchantBackupLog.setRequestId(baseBean.getRequestId());
+		merchantBackupLog.setTimestamp(baseBean.getTimestamp());
+		merchantBackupLog.setMercId(merchNo);
+		merchantBackupLog.setOrgId(orgId);
+		merchantBackupLogDAO.saveMerchantBackupLog(merchantBackupLog);
+		try {
+			String returnMsg = HttpPostInvoker.invokeMethod("param="+JSON.toJSONString(baseBean));
+			ResponseBean responseBean = JSON.parseObject(returnMsg, ResponseBean.class);
+			if("0000".equals(responseBean.getCode())){
+				merchantDAO.updateMerchantBackupStatus(merchNo, "99");
+			}
+			resultBean.setRetCode(responseBean.getCode());
+			resultBean.setRetInfo(responseBean.getMessage());
+			merchantBackupLogDAO.updateMerchantBackupLog(baseBean.getRequestId(), responseBean);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultBean;
 	}
 	
 	public static void main(String[] args) {

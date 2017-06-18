@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import cn.com.agent.bean.ResultBean;
 import cn.com.agent.bean.query.MerchantQueryBean;
 import cn.com.agent.bean.query.TermQueryBean;
 import cn.com.agent.dao.FinaPosDAO;
 import cn.com.agent.dao.UserDAO;
 import cn.com.agent.pojo.UserDO;
+import cn.com.agent.service.TermPOSBackUpService;
 
 @Controller
 @RequestMapping("/term")
@@ -23,6 +25,8 @@ public class TermController {
 	private UserDAO userDAO;
 	@Autowired
 	private FinaPosDAO finaPosDAO;
+	@Autowired
+	private TermPOSBackUpService termPOSBackUpService;
 	
 	@ResponseBody
 	@RequestMapping("/showManager")
@@ -43,5 +47,22 @@ public class TermController {
 		UserDO user = (UserDO) request.getSession().getAttribute("login_user");
 		termQueryBean.setUserId(user.getUserId());
 		return finaPosDAO.queryTermByPage(termQueryBean, page, rows);
+	}
+	
+	@ResponseBody
+	@RequestMapping("/addBackupTerm")
+	public ResultBean backupAdd(String termNo){
+		return termPOSBackUpService.backupAddTermPOS(termNo);
+	}
+	@ResponseBody
+	@RequestMapping("/deleteBackupTerm")
+	public ResultBean backupDelete(String termNo){
+		return termPOSBackUpService.backupDeleteTermPOS(termNo);
+	}
+	
+	@ResponseBody
+	@RequestMapping("/updateBackupTerm")
+	public ResultBean backupUpdate(String termNo){
+		return termPOSBackUpService.backupUpdateTermPOS(termNo);
 	}
 }

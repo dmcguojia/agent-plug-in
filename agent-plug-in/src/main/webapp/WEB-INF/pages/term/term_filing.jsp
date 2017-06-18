@@ -41,16 +41,37 @@ $(function(){
 		url:"term/queryTerm",
 		columns:[[
 			{field:'termNo',title:'终端编号',align:'center',width:100},
-	    	{field:'merchName',title:'商户名称',width:100,align:'center'},
+	    	//{field:'merchName',title:'商户名称',width:100,align:'center'},
 		    {field:'merchNo',title:'商户编号',width:120,align:'center'},
 			{field:'zdxhparaName',title:'终端型号',width:120,align:'center'},	
  			{field:'serialNum',title:'终端序列号',width:100,align:'center'},									
 			{field:'jjtzfparaName',title:'机具投资方',width:120,align:'center'},
 			{field:'instAddr',title:'安装地址',width:120,align:'center'},
  			{field:'status',title:'状态',width:120,align:'center'},
+ 			{field:'backupStatus',title:'报备状态',width:80,align:'center',
+				formatter:function(value,rec){
+					if(value=="01"){
+						return "未报备";	
+					}else if(value=="00"){
+						return "已报备";	
+					}else if(value=="99"){
+						return "已删除";	
+					}
+						
+				}		
+			},
  			{field:'apply_term_id',title:'操作',align:'center',width:80,
 			    formatter:function(value,rec){
-					return '<a href="pages/pos/queryOneApplyfAction.action?termId='+value+'&sort=88" style="color:blue;">详细信息</a>';
+			    	if(rec.backupStatus=="01"){
+						return '<a href="javascript:backupAdd(\''+rec.termNo+'\')" style="color:blue;">报备新增</a>'
+					}else if(rec.backupStatus=="00"){
+						
+						return '<a href="javascript:backupUpdate(\''+rec.termNo+'\')" style="color:blue;">报备修改</a>'
+						+"&nbsp;&nbsp;"+
+						'<a href="javascript:backupDelete(\''+rec.termNo+'\')" style="color:blue;">报备删除</a>';	
+					}else if(rec.backupStatus=="99"){
+						return "";	
+					}
 
 			   }
 			}
@@ -60,11 +81,45 @@ $(function(){
 	});
 })
 function search(){
-    var data={'termNo':$('#termNo').val(),'merchNo':$('#merchNo').val()};
+    var data={'termNo':$('#merch_merchantName').val(),'merchNO':$('#merch_merchantNo').val()};
    $('#posList').datagrid('load',data);
 }
 function resize(){
 	$('#searchForm :input').val('');
+}
+
+function backupAdd(termNo){
+	$.ajax({
+		type: "POST",
+		url: "term/addBackupTerm?termNo=" + termNo,
+		dataType: "json",
+		success: function(json) {	
+			$.messager.alert("",json.retInfo,"info");
+			search();
+		}
+	});
+}
+function backupUpdate(termNo){
+	$.ajax({
+		type: "POST",
+		url: "term/updateBackupTerm?termNo=" + termNo,
+		dataType: "json",
+		success: function(json) {	
+			$.messager.alert("",json.retInfo,"info");
+			search();
+		}
+	});
+}
+function backupDelete(termNo){
+	$.ajax({
+		type: "POST",
+		url: "term/deleteBackupTerm?termNo=" + termNo,
+		dataType: "json",
+		success: function(json) {	
+			$.messager.alert("",json.retInfo,"info");
+			search();
+		}
+	});
 }
 </script>
 </body>

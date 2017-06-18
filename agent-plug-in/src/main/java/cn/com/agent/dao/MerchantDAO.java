@@ -33,9 +33,29 @@ public interface MerchantDAO extends BaseDAO<MerchantDO>{
 	 * @return
 	 */
 	public Map<String, Object> queryBankInfo(String bankNode);
-	
+	/**
+	 * 
+	 * @param tid
+	 * @return
+	 */
 	public ProvinceDO queryProvinceById(long tid);
+	/**
+	 * 
+	 * @param tid
+	 * @return
+	 */
 	public CityDO queryCityById(long tid);
-	
-	public RateBean getMerchantRate(String busiPackCode);
+	/**
+	 * 
+	 * @param busiPackCode
+	 * @param mcc
+	 * @return
+	 */
+	public RateBean getMerchantRate(String busiPackCode,String mcc);
+	/**
+	 * 
+	 * @param merchNo
+	 * @param status
+	 */
+	public void updateMerchantBackupStatus(String merchNo,String status);
 }

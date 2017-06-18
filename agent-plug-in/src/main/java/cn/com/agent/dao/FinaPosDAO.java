@@ -23,4 +23,11 @@ public interface FinaPosDAO extends BaseDAO<FinaPosDO>{
 	 * @return
 	 */
 	public Map<String, Object> queryTermByPage(TermQueryBean termQueryBean,int page,int rows);
+	
+	/**
+	 * 
+	 * @param termNo
+	 * @param status
+	 */
+	public void updateTermBackupStatus(String termNo,String status);
 }

@@ -4,19 +4,21 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
-import com.google.common.collect.Maps;
 
 import cn.com.agent.bean.query.TermQueryBean;
 import cn.com.agent.dao.FinaPosDAO;
 import cn.com.agent.dao.base.impl.HibernateBaseDAOImpl;
 import cn.com.agent.pojo.FinaPosDO;
-import cn.com.agent.pojo.MerchantDO;
+
+import com.google.common.collect.Maps;
 
 @Repository
 public class FinaPosDAOImpl extends HibernateBaseDAOImpl<FinaPosDO> implements FinaPosDAO{
@@ -25,7 +27,8 @@ public class FinaPosDAOImpl extends HibernateBaseDAOImpl<FinaPosDO> implements F
 	@Transactional(readOnly=true)
 	public FinaPosDO getFinaPosByTermNo(String termNo) {
 		Criteria criteria = getSession().createCriteria(FinaPosDO.class);
-		criteria.setFetchMode("merchant", org.hibernate.FetchMode.JOIN);
+		criteria.add(Restrictions.eq("termNo", termNo));
+		criteria.add(Restrictions.eq("status", "00"));
 		return (FinaPosDO) criteria.uniqueResult();
 	}
 
@@ -41,13 +44,13 @@ public class FinaPosDAOImpl extends HibernateBaseDAOImpl<FinaPosDO> implements F
 			criteria2.add(Restrictions.eq("merchNo",termQueryBean.getMerchNO()));
 		}
 		if(!StringUtils.isEmpty(termQueryBean.getTermNo())){
-			criteria.add(Restrictions.eq("merchName", termQueryBean.getTermNo()));
-			criteria2.add(Restrictions.like("merchName", termQueryBean.getTermNo()));
+			criteria.add(Restrictions.eq("termNo", termQueryBean.getTermNo()));
+			criteria2.add(Restrictions.eq("termNo", termQueryBean.getTermNo()));
 		}
-		criteria.add(Restrictions.eq("status", "00"));
+		criteria.add(Restrictions.eq("status", "00"));criteria.addOrder(Order.desc("backupStatus"));
 		criteria2.add(Restrictions.eq("status", "00"));
-		criteria.setFetchMode("merchant", org.hibernate.FetchMode.JOIN);
-		criteria2.setFetchMode("merchant", org.hibernate.FetchMode.JOIN);
+		criteria.add(Restrictions.not(Restrictions.eq("status", "99")));
+		criteria2.add(Restrictions.not(Restrictions.eq("status", "99")));
 		criteria.setFirstResult((page - 1) * rows);  
 	    criteria.setMaxResults(rows); 
 	    
@@ -56,6 +59,15 @@ public class FinaPosDAOImpl extends HibernateBaseDAOImpl<FinaPosDO> implements F
 	    returnMap.put("total",criteria2.setProjection(Projections.rowCount()).uniqueResult());
         returnMap.put("rows", list);
 		return returnMap;
+	}
+	
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED,rollbackFor=Throwable.class)
+	public void updateTermBackupStatus(String termNo,String status){
+		Query query = getSession().createQuery("update FinaPosDO set backupStatus = ? where termNo = ?");
+		query.setParameter(0, status);
+		query.setParameter(1, termNo);
+		query.executeUpdate();
 	}
 
 }
