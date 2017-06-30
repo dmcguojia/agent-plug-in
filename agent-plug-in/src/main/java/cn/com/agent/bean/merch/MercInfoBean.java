@@ -2,6 +2,10 @@ package cn.com.agent.bean.merch;
 
 import java.io.Serializable;
 
+import javassist.expr.NewArray;
+
+import com.alibaba.fastjson.JSON;
+
 public class MercInfoBean implements Serializable {
 
 	/**
@@ -13,6 +17,7 @@ public class MercInfoBean implements Serializable {
 	private String mercId;
 	private String mercProv;
 	private String mercCity;
+	private String memType="2";
 	private String mercTyp;
 	private String mercSts;
 	private String mercStlSts;
@@ -101,7 +106,10 @@ public class MercInfoBean implements Serializable {
 	public void setMercHotLin(String mercHotLin) {
 		this.mercHotLin = mercHotLin;
 	}
-	
-	
-
+	public String getMemType() {
+		return memType;
+	}
+	public void setMemType(String memType) {
+		this.memType = memType;
+	}
 }

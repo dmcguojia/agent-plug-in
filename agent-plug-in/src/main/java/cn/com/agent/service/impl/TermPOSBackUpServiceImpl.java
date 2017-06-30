@@ -1,14 +1,12 @@
 package cn.com.agent.service.impl;
 
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Maps;
 
 import cn.com.agent.bean.BaseBean;
 import cn.com.agent.bean.ResponseBean;
@@ -18,17 +16,18 @@ import cn.com.agent.bean.term.TermBean;
 import cn.com.agent.dao.FinaPosDAO;
 import cn.com.agent.dao.TermBackupLogDAO;
 import cn.com.agent.pojo.FinaPosDO;
-import cn.com.agent.pojo.MerchantBackupLogDO;
-import cn.com.agent.pojo.MerchantDO;
 import cn.com.agent.pojo.TermBackupLogDO;
 import cn.com.agent.service.TermPOSBackUpService;
 import cn.com.agent.utils.BeanCopyUtil;
 import cn.com.agent.utils.HttpPostInvoker;
+
+import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Maps;
 @Service
 public class TermPOSBackUpServiceImpl implements TermPOSBackUpService{
 	//代理商编号
 	//private final static String orgId="SHANDONG";
-	private final static String orgId="4801666000";
+	private final static String orgId=ResourceBundle.getBundle("paramater").getString("cardinfo.orgid");
 	@Autowired
 	private FinaPosDAO finaPosDAO;
 	@Autowired
