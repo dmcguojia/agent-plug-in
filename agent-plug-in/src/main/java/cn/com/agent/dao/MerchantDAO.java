@@ -58,4 +58,6 @@ public interface MerchantDAO extends BaseDAO<MerchantDO>{
 	 * @param status
 	 */
 	public void updateMerchantBackupStatus(String merchNo,String status);
+
+	void updateMerchantBackup(String merchNo, String status, String merchantId);
 }

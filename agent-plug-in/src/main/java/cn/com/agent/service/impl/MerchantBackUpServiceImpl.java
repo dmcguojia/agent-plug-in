@@ -110,7 +110,7 @@ public class MerchantBackUpServiceImpl implements MerchantBackUpService{
 		mercInfo.setMercSts(MerchStatusEnum.normal.getCode()+"");//状态
 		mercInfo.setMercStlSts("0");//结算状态
 		mercInfo.setMercCnm(merchant.getMerchName());//会员名称
-		mercInfo.setMercAbbr(merchant.getTradeAddr());//会员简称
+		mercInfo.setMercAbbr(merchant.getMerchName());//会员简称
 		mercInfo.setMercPyAbbr("");//拼音简称
 		mercInfo.setMccCd(merchant.getMcclist());//会员行业类别
 		mercInfo.setBusAddr(merchant.getBusiAddr());//营业地址
@@ -337,11 +337,11 @@ public class MerchantBackUpServiceImpl implements MerchantBackUpService{
 		String merchNo = backupBean.getMerchNo();
 		ResultBean resultBean = new ResultBean();
 		MerchantDO merchant = merchantDAO.getMerchanByMerchNo(merchNo);
-		if(!"01".equals(merchant.getBackupStatus())){
+		/*if(!"01".equals(merchant.getBackupStatus())){
 			resultBean.setRetCode("09");
 			resultBean.setRetInfo("商户已经报备");
 			return resultBean;
-		}
+		}*/
 		MercInfoBean mercInfo = generateMerchantBean(merchant);// 会员基本信息
 		MercBusiBean mercBusi = generateMercBusiBean(merchant);// 会员营业信息
 		MercMcntBean mercMcnt = generateMercMcntBean(merchant);// 联系人信息
@@ -407,11 +407,11 @@ public class MerchantBackUpServiceImpl implements MerchantBackUpService{
 		String merchNo = backupBean.getMerchNo();
 		ResultBean resultBean = new ResultBean();
 		MerchantDO merchant = merchantDAO.getMerchanByMerchNo(merchNo);
-		if(!"00".equals(merchant.getBackupStatus())){
+		/*if(!"00".equals(merchant.getBackupStatus())){
 			resultBean.setRetCode("09");
 			resultBean.setRetInfo("无法修改商户报备信息");
 			return resultBean;
-		}
+		}*/
 		MercInfoBean mercInfo = generateMerchantBean(merchant);// 会员基本信息
 		MercBusiBean mercBusi = generateMercBusiBean(merchant);// 会员营业信息
 		MercMcntBean mercMcnt = generateMercMcntBean(merchant);// 联系人信息
@@ -465,6 +465,43 @@ public class MerchantBackUpServiceImpl implements MerchantBackUpService{
 			}
 			resultBean.setRetCode(responseBean.getCode());
 			resultBean.setRetInfo(responseBean.getMessage());
+			merchantBackupLogDAO.updateMerchantBackupLog(baseBean.getRequestId(), responseBean);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resultBean;
+	}
+	@Override
+	public ResultBean backupQueryMerchant(String merchNo) {
+		ResultBean resultBean = new ResultBean();
+		Map<String, Object> msgMap = Maps.newHashMap();
+		msgMap.put("mercId", merchNo);
+		msgMap.put("orgId", orgId);
+		BaseBean baseBean = new BaseBean();
+		baseBean.setBody(msgMap);
+		baseBean.setAction(APICodeEnum.MEMBER_QUERY.getCode());
+		baseBean.setRequestId(UUID.randomUUID().toString().replaceAll("-", "").toUpperCase());
+		MerchantBackupLogDO merchantBackupLog = new MerchantBackupLogDO();
+		merchantBackupLog.setAction(baseBean.getAction());
+		merchantBackupLog.setRequestId(baseBean.getRequestId());
+		merchantBackupLog.setTimestamp(baseBean.getTimestamp());
+		merchantBackupLog.setMercId(merchNo);
+		merchantBackupLog.setOrgId(orgId);
+		merchantBackupLogDAO.saveMerchantBackupLog(merchantBackupLog);
+		try {
+			String returnMsg = HttpPostInvoker.invokeMethod("param="+JSON.toJSONString(baseBean));
+			ResponseBean responseBean = JSON.parseObject(returnMsg, ResponseBean.class);
+			if("0000".equals(responseBean.getCode())){
+				String merchantId = responseBean.getBody().getMerchantId();
+				String status = responseBean.getBody().getStatus();
+				merchantDAO.updateMerchantBackup(merchNo, status,merchantId);
+				resultBean.setRetInfo("查询成功");
+			}else {
+				resultBean.setRetInfo("查询失败");
+			}
+			resultBean.setRetCode(responseBean.getCode());
+			
 			merchantBackupLogDAO.updateMerchantBackupLog(baseBean.getRequestId(), responseBean);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

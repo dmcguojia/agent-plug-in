@@ -167,27 +167,43 @@ table tr td.update {
 					},
 					{field:'backupStatus',title:'报备状态',width:80,align:'center',
 						formatter:function(value,rec){
+							//0正常 1 2  4 5
 							if(value=="01"){
 								return "未报备";	
 							}else if(value=="00"){
 								return "已报备";	
 							}else if(value=="99"){
 								return "已删除";	
+							}else if(value=='0'){
+								return "正常";		
+							}else if(value=='1'){
+								return "销户";	
+							}else if(value=='2'){
+								return "已审批";	
+							}else if(value=='4'){
+								return "黑名单";	
+							}else if(value=='5'){
+								return "冻结";	
 							}
+							
 								
 						}		
 					},
+					
+					{field:'merchantId',title:'卡友商户号',width:120,align:'center'},
 					{field:'APPLY_MERCH_ID',title:'操作',align:'center',
 						formatter:function(value,rec){
 							if(rec.backupStatus=="01"){
 								return '<a href="javascript:backupAdd(\''+rec.merchNo+'\','+rec.setlCycle+')" style="color:blue;">报备新增</a>'
-							}else if(rec.backupStatus=="00"){
+							}else if(rec.backupStatus=="99"){
+								return "";	
+							}else {
 								
 								return '<a href="javascript:backupUpdate(\''+rec.merchNo+'\','+rec.setlCycle+')" style="color:blue;">报备修改</a>'
 								+"&nbsp;&nbsp;"+
-								'<a href="javascript:backupDelete(\''+rec.merchNo+'\','+rec.setlCycle+')" style="color:blue;">报备删除</a>';	
-							}else if(rec.backupStatus=="99"){
-								return "";	
+								'<a href="javascript:backupDelete(\''+rec.merchNo+'\','+rec.setlCycle+')" style="color:blue;">报备删除</a>'
+								+"&nbsp;&nbsp;"+
+								'<a href="javascript:backupQuery(\''+rec.merchNo+'\','+rec.setlCycle+')" style="color:blue;">报备查询</a>';	
 							}
 							
 							
@@ -286,6 +302,19 @@ table tr td.update {
 	            });
 			
 		}
+		function backupQuery(merchNo,setlCycle){
+              	$.ajax({
+      				type: "POST",
+      				url: "merchant/queryBackupMerchant?merchNo=" + merchNo,
+      				dataType: "json",
+      				success: function(json) {	
+      					$.messager.alert("",json.retInfo,"info");
+      					search();
+      				}
+      			});
+		}
+		
+		
 		
 		function showBackupWin(){
 			$('#w').window({

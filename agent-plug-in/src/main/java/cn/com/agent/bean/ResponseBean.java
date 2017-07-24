@@ -11,6 +11,7 @@ public class ResponseBean implements Serializable{
 	private String requestId;
 	private String code;
 	private String message;
+	private BodyBean body;
 	public String getRequestId() {
 		return requestId;
 	}
@@ -28,6 +29,12 @@ public class ResponseBean implements Serializable{
 	}
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	public BodyBean getBody() {
+		return body;
+	}
+	public void setBody(BodyBean body) {
+		this.body = body;
 	}
 	
 	

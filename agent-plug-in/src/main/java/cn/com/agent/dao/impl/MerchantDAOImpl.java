@@ -157,4 +157,14 @@ public class MerchantDAOImpl extends HibernateBaseDAOImpl<MerchantDO> implements
 		query.setParameter(1, merchNo);
 		query.executeUpdate();
 	}
+	
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED,rollbackFor=Throwable.class)
+	public void updateMerchantBackup(String merchNo,String status,String merchantId){
+		Query query = getSession().createQuery("update MerchantDO set backupStatus = ?,merchantId = ? where merchNo = ?");
+		query.setParameter(0, status);
+		query.setParameter(1, merchantId);
+		query.setParameter(2, merchNo);
+		query.executeUpdate();
+	}
 }

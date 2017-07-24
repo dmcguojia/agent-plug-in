@@ -29,5 +29,17 @@ public class MerchantBackupLogDAOImpl extends HibernateBaseDAOImpl<MerchantBacku
 		query.setParameter(2, responseBean.getMessage());
 		query.setParameter(3, requestId);
 		query.executeUpdate();
+		if(responseBean.getBody()!=null) {
+			updateMerchantBackupLog(requestId,responseBean.getBody().getMerchantId(),responseBean.getBody().getStatus());
+		}
+	}
+	@Transactional(propagation=Propagation.REQUIRED,rollbackFor=Throwable.class)
+	public void updateMerchantBackupLog(String requestId,String merchantId,String status) {
+		String hql = "update MerchantBackupLogDO set status = ?,merchantId = ? where requestId = ?";
+		Query query = getSession().createQuery(hql);
+		query.setParameter(0, status);
+		query.setParameter(1, merchantId);
+		query.setParameter(2, requestId);
+		query.executeUpdate();
 	}
 }

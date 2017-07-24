@@ -35,4 +35,11 @@ public interface MerchantBackUpService {
 	 * @return
 	 */
 	public ResultBean backupDeleteMerchant(String merchNo);
+	
+	/**
+	 * 报备商户（查询）
+	 * @param merchNo
+	 * @return
+	 */
+	public ResultBean backupQueryMerchant(String merchNo);
 }

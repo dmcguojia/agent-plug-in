@@ -90,6 +90,7 @@ public class MerchantDO implements java.io.Serializable {
 	private Timestamp busiLicenseDate;
 	private Timestamp instiCodeDate;
 	private String backupStatus;
+	private String merchantId;
 	/**
 	 * 增加商户所属市辖区/县  开户行省  市  所属市辖区/县     开通终端数量  实际开通终端数量
 	 */
@@ -938,6 +939,14 @@ public class MerchantDO implements java.io.Serializable {
 
 	public void setBackupStatus(String backupStatus) {
 		this.backupStatus = backupStatus;
+	}
+	@Column(name = "MERCHANTID")
+	public String getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
 	}
 	
 	

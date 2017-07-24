@@ -17,7 +17,7 @@ public class MercInfoBean implements Serializable {
 	private String mercId;
 	private String mercProv;
 	private String mercCity;
-	private String memType="2";
+	private String mercUpperType="2";
 	private String mercTyp;
 	private String mercSts;
 	private String mercStlSts;
@@ -106,10 +106,11 @@ public class MercInfoBean implements Serializable {
 	public void setMercHotLin(String mercHotLin) {
 		this.mercHotLin = mercHotLin;
 	}
-	public String getMemType() {
-		return memType;
+	public String getMercUpperType() {
+		return mercUpperType;
 	}
-	public void setMemType(String memType) {
-		this.memType = memType;
+	public void setMercUpperType(String mercUpperType) {
+		this.mercUpperType = mercUpperType;
 	}
+	
 }

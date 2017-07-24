@@ -66,4 +66,11 @@ public class MerchantController {
 		//return merchantBackUpService.backupUpdateMerchant(backupBean.getMerchNo());
 		return merchantBackUpService.backupUpdateMerchant(backupBean);
 	}
+	
+	@ResponseBody
+	@RequestMapping("/queryBackupMerchant")
+	public ResultBean backupQuery(String merchNo){
+		//return merchantBackUpService.backupAddMerchant(backupBean.getMerchNo());
+		return merchantBackUpService.backupQueryMerchant(merchNo);
+	}
 }

@@ -87,8 +87,8 @@ public class MerchantBackupLogDO implements Serializable{
 	private String responseid;
 	private String retcode;
 	private String retinfo;
-	
-	
+	private String status;
+	private String merchantId;
 	
 	
 	@Id
@@ -541,6 +541,20 @@ public class MerchantBackupLogDO implements Serializable{
 	}
 	public void setRetinfo(String retinfo) {
 		this.retinfo = retinfo;
+	}
+	@Column(name = "STATUS")
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	@Column(name = "MERCHANTID")
+	public String getMerchantId() {
+		return merchantId;
+	}
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
 	}
 	
 	
